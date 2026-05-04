@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,6 +33,22 @@ public class HelloController {
             Book bookObj = bookRepository.save(book);
             return new ResponseEntity<>(bookObj, HttpStatus.CREATED);
         } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/getAllBooks")
+    public ResponseEntity<List<Book>> getAllBooks() {
+        try {
+            List<Book> bookList = new ArrayList<>();
+            bookRepository.findAll().forEach(bookList::add);
+
+            if (bookList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(bookList, HttpStatus.OK);
+        } catch(Exception ex) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
